@@ -100,6 +100,17 @@ module Tangle
                          ]
       end
 
+      it 'attaches matching documents at the given keys' do
+        foo = fixture_file 'foo', { id: 1, a: 1 }
+        bar = fixture_file 'bar', { id: 1, b: 2 }
+        baz = fixture_file 'bar', { id: 1, c: 3 }
+
+        described_class.new('attach', [foo, bar, baz], { :out => stdout, :attach_keys => ['bar', 'baz'] }).run
+        result.should == [
+                          { 'id' => 1, 'a' => 1, 'bar' => [ { 'id' => 1, 'b' => 2 } ], 'baz' => [ { 'id' => 1, 'c' => 3 } ] },
+                         ]
+      end
+
       it 'raises error if the attached keys are not named and more than one' do
         foo = fixture_file 'foo', { id: 1, a: 1, x: 1 }, { id: 2, a: 2, x: 2 }
         bar = fixture_file 'bar', { id: 1, b: 3, x: 3 }, { id: 2, b: 4, x: 4 }

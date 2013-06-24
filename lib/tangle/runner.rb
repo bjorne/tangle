@@ -38,12 +38,12 @@ module Tangle
           end
         end
       when 'attach'
-        raise ArgumentError, "Must supply `attach_keys` if more than one file attached." if @options[:attach_keys].size < @files.size && @files.size > 2
+        raise ArgumentError, "Must supply `attach_keys` if more than one file attached." if @options[:attach_keys].size < @files.size - 1 && @files.size > 2
         all_keys = data_by_file_by_key.first.keys
         all = all_keys.map do |key|
           base = data_by_file_by_key.first[key].first
-          data_by_file_by_key[1..2].each do |file_data|
-            base.merge!({ 'children' => file_data[key] || [] })
+          data_by_file_by_key[1..2].each_with_index do |file_data, index|
+            base.merge!({ @options[:attach_keys][index] => file_data[key] || [] })
           end
           base
         end
