@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+# puts [:in, STDIN.readlines] unless STDIN.closed? || STDIN.eof?
+puts [:err, STDERR.readlines]

@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/tangle'
+
+ACCEPTED_MODES = %w(merge attach)
+
+options = { :keys => ['id'] }
+OptionParser.new do |opts|
+  opts.banner = "Usage: tangle MODE [options] FILE [FILE ...]"
+
+  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+    options[:verbose] = v
+  end
+
+  opts.on("-k", "--keys=KEYLIST", "The key to merge on, optionally specify comma separated list for each file") do |v|
+    options[:keys] = v.split(',').map(&:strip)
+  end
+
+  opts.on("-a", "--attach-keys=KEYLIST", "The key to attach to, optionally specify comma separated list for each file") do |v|
+    options[:attach_keys] = v.split(',').map(&:strip)
+  end
+end.parse!
+
+
+mode = ARGV.shift
+raise ArgumentError, "Mode must be one of #{ACCEPTED_MODES.join(', ')}." unless ACCEPTED_MODES.include?(mode)
+raise ArgumentError, "Must specify at least two input files" if ARGV.size < 2
+files = ARGV.dup
+raise ArgumentError, "Too few keys -- specify a single one for all, or one for each input" if options[:keys].size > 1 && options[:keys].size < files.size
+
+runner = Tangle::Runner.new(mode, files, options)
+runner.run
