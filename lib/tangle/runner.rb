@@ -49,10 +49,10 @@ module Tangle
         end
       end
 
-        all.each do |row|
+      all.each do |row|
         @options[:out].puts row.to_json
       end
-      end
+    end
 
     private
 
